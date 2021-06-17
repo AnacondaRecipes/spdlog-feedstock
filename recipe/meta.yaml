@@ -9,8 +9,10 @@ package:
 source:
   url: https://github.com/gabime/{{ name|lower }}/archive/v{{ version }}.tar.gz
   sha256: {{ sha256 }}
-  patches:
-    - async_test_fix.diff
+  # 6/17/2021: Increase sleep time on a test case to avoid spurious failures. The issue was fixed in v1.8.2,
+  # see https://github.com/gabime/spdlog/commit/fc1ce48dc7b267b6abf0a94b0dc1997d51986e8b
+  #patches:
+    #- async_test_fix.diff
 
 build:
   number: 0
@@ -36,11 +38,12 @@ test:
 
 about:
   home: https://github.com/gabime/spdlog
+  doc_url: https://github.com/gabime/spdlog/wiki/1.-QuickStart
+  dev_url: https://github.com/gabime/spdlog
   license: MIT
   license_family: MIT
   license_file: LICENSE
   summary: Super fast C++ logging library.
-
   description: |
     spdlog is a header only library for Super fast C++ logging
     to be used with a C++11 compiler.
