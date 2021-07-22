@@ -1,6 +1,6 @@
 {% set name = "spdlog" %}
-{% set version = "1.8.2" %}
-{% set sha256 = "e20e6bd8f57e866eaf25a5417f0a38a116e537f1a77ac7b5409ca2b180cec0d5" %}
+{% set version = "1.9.0" %}
+{% set sha256 = "9ad181d75aaedbf47c8881e7b947a47cac3d306997e39de24dba60db633e70a7" %}
 
 package:
   name: {{ name|lower }}
@@ -9,8 +9,10 @@ package:
 source:
   url: https://github.com/gabime/{{ name|lower }}/archive/v{{ version }}.tar.gz
   sha256: {{ sha256 }}
-  patches:
-    - async_test_fix.diff
+  #patches:
+  # 2021/7/21: Sleep time on a test case to avoid spurious failures was increased,
+  # see https://github.com/gabime/spdlog/commit/fc1ce48dc7b267b6abf0a94b0dc1997d51986e8b
+  #  - async_test_fix.diff
 
 build:
   number: 0
@@ -23,6 +25,8 @@ requirements:
     - cmake
     - {{ compiler('cxx') }}
     - make  # [ unix ]
+    - patch  # [not win]
+    - m2-patch  # [win]
   host:
     - fmt
 
@@ -33,6 +37,8 @@ test:
 
 about:
   home: https://github.com/gabime/spdlog
+  dev_url: https://github.com/gabime/spdlog
+  doc_url: https://github.com/gabime/spdlog/wiki/1.-QuickStart
   license: MIT
   license_family: MIT
   license_file: LICENSE
