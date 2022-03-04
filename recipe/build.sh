@@ -1,9 +1,29 @@
 #!/bin/bash
 
-mkdir build
-cd build
 
-cmake -D CMAKE_BUILD_TYPE=Release -D CMAKE_INSTALL_PREFIX=$PREFIX -D SPDLOG_BUILD_TESTS=ON -D CMAKE_INSTALL_LIBDIR=lib -D SPDLOG_FMT_EXTERNAL=ON -D SPDLOG_BUILD_SHARED=ON ..
-make -j${CPU_COUNT}
-ctest -VV --output-on-failure
-make install
+# Isolate the build.
+mkdir -p Build
+cd Build || exit 1
+
+
+# Generate the build files.
+cmake .. -G"Ninja" ${CMAKE_ARGS} \
+      -DCMAKE_PREFIX_PATH=$PREFIX \
+      -DCMAKE_INSTALL_PREFIX=$PREFIX \
+      -DCMAKE_INSTALL_LIBDIR=lib \
+      -DSPDLOG_FMT_EXTERNAL=ON \
+      -DSPDLOG_BUILD_SHARED=ON \
+      -DSPDLOG_BUILD_TESTS=ON \
+      -DCMAKE_BUILD_TYPE=Release
+
+
+# Build.
+ninja install || exit 1
+
+
+# Perform tests.
+ninja test || exit 1
+
+
+# Install.
+ninja install || exit 1
