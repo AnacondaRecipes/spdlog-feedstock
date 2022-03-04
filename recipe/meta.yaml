@@ -10,18 +10,18 @@ package:
 source:
   url: https://github.com/gabime/{{ name|lower }}/archive/v{{ version }}.tar.gz
   sha256: {{ sha256 }}
-  #patches:
-  # 2021/7/21: Sleep time on a test case to avoid spurious failures was increased,
-  # see https://github.com/gabime/spdlog/commit/fc1ce48dc7b267b6abf0a94b0dc1997d51986e8b
-  #  - async_test_fix.diff
+  patches:              # [win]
+    - async_test.patch  # [win]  Simple workaround for async issue. It looks like the code works, but the test result is inconsistent.
 
 build:
   skip: true  # [win and vc<14]
   number: {{ build_number }}
   run_exports:
     - {{ pin_subpackage('spdlog', max_pin='x') }}
+  ignore_run_exports:     # [win]
+    - fmt                 # [win]  Static library.
   missing_dso_whitelist:  # [s390x]
-    - $RPATH/ld64.so.1    # [s390x]
+    - $RPATH/ld64.so.1    # [s390x] Know s390x `ld64.so` issue.
 
 requirements:
   build:
