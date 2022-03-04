@@ -7,6 +7,7 @@ cd Build || exit 1
 
 
 # Generate the build files.
+echo "Generating the build files."
 cmake .. -G"Ninja" ${CMAKE_ARGS} \
       -DCMAKE_PREFIX_PATH=$PREFIX \
       -DCMAKE_INSTALL_PREFIX=$PREFIX \
@@ -18,12 +19,20 @@ cmake .. -G"Ninja" ${CMAKE_ARGS} \
 
 
 # Build.
-ninja install || exit 1
+echo "Building..."
+ninja || exit 1
 
 
 # Perform tests.
+echo "Testing..."
 ninja test || exit 1
 
 
-# Install.
+# Installing
+echo "Installing..."
 ninja install || exit 1
+
+
+# Error free exit!
+echo "Error free exit!"
+exit 0
