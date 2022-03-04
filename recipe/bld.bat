@@ -26,7 +26,8 @@ if errorlevel 1 exit 1
 
 :: Perforem tests.
 echo "Testing..."
-ninja test
+::ninja test
+tests\spdlog-utest.exe
 if errorlevel 1 exit 1
 
 
