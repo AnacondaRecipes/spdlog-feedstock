@@ -1,39 +1,65 @@
-{% set name = "spdlog" %}
-{% set version = "1.9.0" %}
-{% set sha256 = "9ad181d75aaedbf47c8881e7b947a47cac3d306997e39de24dba60db633e70a7" %}
+{% set version = "1.9.2" %}
+{% set sha256 = "6fff9215f5cb81760be4cc16d033526d1080427d236e86d70bb02994f85e3d38" %}
+{% set build_number = "0" %}
 
 package:
-  name: {{ name|lower }}
+  name: spdlog-split
   version: {{ version }}
 
 source:
-  url: https://github.com/gabime/{{ name|lower }}/archive/v{{ version }}.tar.gz
+  url: https://github.com/gabime/spdlog/archive/v{{ version }}.tar.gz
   sha256: {{ sha256 }}
-  #patches:
-  # 2021/7/21: Sleep time on a test case to avoid spurious failures was increased,
-  # see https://github.com/gabime/spdlog/commit/fc1ce48dc7b267b6abf0a94b0dc1997d51986e8b
-  #  - async_test_fix.diff
+  patches:              # [win]
+    - async_test.patch  # [win]  Simple workaround for async issue. It looks like the code works, but the test result is inconsistent.
 
 build:
-  number: 0
-  run_exports:
-    - {{ pin_subpackage('spdlog', max_pin='x') }}
   skip: true  # [win and vc<14]
+  number: {{ build_number }}
 
-requirements:
-  build:
-    - cmake
-    - {{ compiler('cxx') }}
-    - make  # [ unix ]
-    - patch  # [not win]
+requirements:   # [win]
+  build:        # [win]
     - m2-patch  # [win]
-  host:
-    - fmt
 
-test:
-  commands:
-    - test -e $PREFIX/include/spdlog/spdlog.h  # [not win]
-    - if not exist %PREFIX%\Library\include\spdlog\spdlog.h exit 1  # [win]
+
+outputs:
+  # Built in the historic Anaconda way.
+  - name: spdlog
+    script: build_std.sh  # [unix]
+    script: bld_std.bat    # [win]
+    build:
+      run_exports:
+        - {{ pin_subpackage('spdlog', max_pin='x') }}
+      missing_dso_whitelist:  # [s390x]
+        - $RPATH/ld64.so.1    # [s390x] Know s390x `ld64.so` issue.
+    requirements:
+      build:
+        - cmake
+        - {{ compiler('cxx') }}
+        - ninja
+      host:
+        - fmt >=8.1.1
+    test:
+      commands:
+        - test -e $PREFIX/include/spdlog/spdlog.h  # [unix]
+        - if not exist %PREFIX%\Library\include\spdlog\spdlog.h exit 1  # [win]
+  # Built in the historic conda-forge way.
+  - name: spdlog-fmt-embed
+    script: build_fmt_embed.sh  # [unix]
+    script: bld_fmt_embed.bat   # [win]
+    build:
+      run_exports:
+        - {{ pin_subpackage('spdlog-fmt-embed', max_pin='x') }}
+      missing_dso_whitelist:  # [s390x]
+        - $RPATH/ld64.so.1    # [s390x] Know s390x `ld64.so` issue.
+    requirements:
+      build:
+        - cmake
+        - {{ compiler('cxx') }}
+        - ninja
+    test:
+      commands:
+        - test -e $PREFIX/include/spdlog/spdlog.h  # [unix]
+        - if not exist %PREFIX%\Library\include\spdlog\spdlog.h exit 1  # [win]
 
 about:
   home: https://github.com/gabime/spdlog
