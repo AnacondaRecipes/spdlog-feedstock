@@ -1,5 +1,5 @@
-{% set version = "1.9.2" %}
-{% set sha256 = "6fff9215f5cb81760be4cc16d033526d1080427d236e86d70bb02994f85e3d38" %}
+{% set version = "1.11.0" %}
+{% set sha256 = "ca5cae8d6cac15dae0ec63b21d6ad3530070650f68076f3a4a862ca293a858bb" %}
 {% set build_number = "0" %}
 
 package:
@@ -37,7 +37,7 @@ outputs:
         - {{ compiler('cxx') }}
         - ninja
       host:
-        - fmt >=8.1.1
+        - fmt 9.1.0
     test:
       commands:
         - test -e $PREFIX/include/spdlog/spdlog.h  # [unix]
