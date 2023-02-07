@@ -40,7 +40,7 @@ outputs:
         - fmt 9.1.0
     test:
       commands:
-        - test -e $PREFIX/include/spdlog/spdlog.h  # [unix]
+        - test -e $PREFIX/include/spdlog/spdlog.h                       # [unix]
         - if not exist %PREFIX%\Library\include\spdlog\spdlog.h exit 1  # [win]
   # Built in the historic conda-forge way.
   - name: spdlog-fmt-embed
@@ -58,7 +58,7 @@ outputs:
         - ninja
     test:
       commands:
-        - test -e $PREFIX/include/spdlog/spdlog.h  # [unix]
+        - test -e $PREFIX/include/spdlog/spdlog.h                       # [unix]
         - if not exist %PREFIX%\Library\include\spdlog\spdlog.h exit 1  # [win]
 
 about:
