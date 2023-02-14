@@ -1,9 +1,10 @@
 #!/bin/bash
+echo "Building ${PKG_NAME}."
 
 
 # Isolate the build.
-mkdir -p Build
-cd Build || exit 1
+mkdir -p Build-${PKG_NAME}
+cd Build-${PKG_NAME} || exit 1
 
 
 # Generate the build files.

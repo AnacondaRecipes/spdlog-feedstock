@@ -1,10 +1,11 @@
 :: cmd
+echo "Building %PKG_NAME%."
 
 
 :: Isolate the build.
-mkdir Build
-cd Build
-if errorlevel 1 exit 1
+mkdir Build-%PKG_NAME%
+cd Build-%PKG_NAME%
+if errorlevel 1 exit /b 1
 
 
 :: Generate the build files.
