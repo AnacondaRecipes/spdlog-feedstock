@@ -1,0 +1,106 @@
+From f58c7c1be66722d80064ce8e6eca76cb64a9df48 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Tomasz=20Bene=C5=9B?= <tbenes@anaconda.com>
+Date: Thu, 7 Aug 2025 15:25:17 +0200
+Subject: [PATCH] fix mdc
+
+---
+ CMakeLists.txt       |  2 +-
+ include/spdlog/mdc.h | 30 +++++++++---------------------
+ src/mdc.cpp          | 31 +++++++++++++++++++++++++++++++
+ 3 files changed, 41 insertions(+), 22 deletions(-)
+ create mode 100644 src/mdc.cpp
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 3368e4d..cf9de56 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -152,7 +152,7 @@ message(STATUS "Build type: " ${CMAKE_BUILD_TYPE})
+ # ---------------------------------------------------------------------------------------
+ # Static/Shared library
+ # ---------------------------------------------------------------------------------------
+-set(SPDLOG_SRCS src/spdlog.cpp src/stdout_sinks.cpp src/color_sinks.cpp src/file_sinks.cpp src/async.cpp src/cfg.cpp)
++set(SPDLOG_SRCS src/spdlog.cpp src/stdout_sinks.cpp src/color_sinks.cpp src/file_sinks.cpp src/async.cpp src/cfg.cpp src/mdc.cpp)
+ 
+ if(NOT SPDLOG_USE_STD_FORMAT AND NOT SPDLOG_FMT_EXTERNAL AND NOT SPDLOG_FMT_EXTERNAL_HO)
+     list(APPEND SPDLOG_SRCS src/bundled_fmtlib_format.cpp)
+diff --git a/include/spdlog/mdc.h b/include/spdlog/mdc.h
+index bc13174..2d48e11 100644
+--- a/include/spdlog/mdc.h
++++ b/include/spdlog/mdc.h
+@@ -26,27 +26,15 @@ class SPDLOG_API mdc {
+ public:
+     using mdc_map_t = std::map<std::string, std::string>;
+ 
+-    static void put(const std::string &key, const std::string &value) {
+-        get_context()[key] = value;
+-    }
+-
+-    static std::string get(const std::string &key) {
+-        auto &context = get_context();
+-        auto it = context.find(key);
+-        if (it != context.end()) {
+-            return it->second;
+-        }
+-        return "";
+-    }
+-
+-    static void remove(const std::string &key) { get_context().erase(key); }
+-
+-    static void clear() { get_context().clear(); }
+-
+-    static mdc_map_t &get_context() {
+-        static thread_local mdc_map_t context;
+-        return context;
+-    }
++    static void put(const std::string &key, const std::string &value);
++
++    static std::string get(const std::string &key);
++
++    static void remove(const std::string &key);
++
++    static void clear();
++
++    static mdc_map_t &get_context();
+ };
+ 
+ }  // namespace spdlog
+diff --git a/src/mdc.cpp b/src/mdc.cpp
+new file mode 100644
+index 0000000..7664ce7
+--- /dev/null
++++ b/src/mdc.cpp
+@@ -0,0 +1,31 @@
++#include <spdlog/mdc.h>
++
++namespace spdlog {
++
++mdc::mdc_map_t &mdc::get_context() {
++    static thread_local mdc_map_t context;
++    return context;
++}
++
++void mdc::put(const std::string &key, const std::string &value) {
++    get_context()[key] = value;
++}
++
++std::string mdc::get(const std::string &key) {
++    auto &context = get_context();
++    auto it = context.find(key);
++    if (it != context.end()) {
++        return it->second;
++    }
++    return "";
++}
++
++void mdc::remove(const std::string &key) {
++    get_context().erase(key);
++}
++
++void mdc::clear() {
++    get_context().clear();
++}
++
++}  // namespace spdlog
+-- 
+2.39.5 (Apple Git-154)
+

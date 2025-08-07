@@ -7,16 +7,18 @@ package:
 source:
   url: https://github.com/gabime/spdlog/archive/v{{ version }}.tar.gz
   sha256: 15a04e69c222eb6c01094b5c7ff8a249b36bb22788d72519646fb85feb267e67
-  patches:              # [win]
+  patches:
     - async_test.patch  # [win]  Simple workaround for async issue. It looks like the code works, but the test result is inconsistent.
+    - 0001-fix-mdc.patch
 
 build:
   skip: true  # [win and vc<14]
   number: 0
 
-requirements:   # [win]
-  build:        # [win]
+requirements:
+  build:
     - m2-patch  # [win]
+    - patch     # [not win]
 
 
 outputs:
