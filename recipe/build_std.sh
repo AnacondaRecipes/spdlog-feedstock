@@ -26,7 +26,7 @@ ninja || exit 1
 
 # Perform tests.
 echo "Testing..."
-ninja test || exit 1
+ninja test || (cat Testing/Temporary/LastTest.log; exit 1)
 
 
 # Installing
