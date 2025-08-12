@@ -15,6 +15,7 @@ cmake .. -G"Ninja" ${CMAKE_ARGS} \
       -DSPDLOG_FMT_EXTERNAL=OFF \
       -DSPDLOG_BUILD_SHARED=ON \
       -DSPDLOG_BUILD_TESTS=ON \
+      -DSPDLOG_NO_TLS=ON \
       -DCMAKE_BUILD_TYPE=Release
 
 

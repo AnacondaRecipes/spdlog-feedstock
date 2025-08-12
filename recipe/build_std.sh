@@ -16,6 +16,7 @@ cmake .. -G"Ninja" ${CMAKE_ARGS} \
       -DSPDLOG_FMT_EXTERNAL=ON \
       -DSPDLOG_BUILD_SHARED=ON \
       -DSPDLOG_BUILD_TESTS=ON \
+      -DSPDLOG_NO_TLS=ON \
       -DCMAKE_BUILD_TYPE=Release
 
 
@@ -26,7 +27,7 @@ ninja || exit 1
 
 # Perform tests.
 echo "Testing..."
-ninja test || exit 1
+ninja test || (cat Testing/Temporary/LastTest.log; exit 1)
 
 
 # Installing
