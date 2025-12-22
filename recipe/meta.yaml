@@ -23,8 +23,6 @@ outputs:
     build:
       run_exports:
         - {{ pin_subpackage('spdlog', max_pin='x') }}
-      missing_dso_whitelist:  # [s390x]
-        - $RPATH/ld64.so.1    # [s390x] Know s390x `ld64.so` issue.
     requirements:
       build:
         - cmake
@@ -33,7 +31,7 @@ outputs:
         - ninja
         # Tests are using catch2 which is unavailable on the main channel,
         # using vendored one instead
-        - git  # [linux]
+        - git
       host:
         - fmt 11.2.0
     test:
@@ -55,7 +53,7 @@ outputs:
         - {{ stdlib('c') }}
         - {{ compiler('cxx') }}
         - ninja
-        - git  # [linux]
+        - git
     test:
       commands:
         - test -e $PREFIX/include/spdlog/spdlog.h                       # [unix]
