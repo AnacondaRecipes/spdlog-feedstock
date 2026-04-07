@@ -1,4 +1,4 @@
-{% set version = "1.16.0" %}
+{% set version = "1.17.0" %}
 {% set name = "spdlog" %}
 
 package:
@@ -7,7 +7,7 @@ package:
 
 source:
   url: https://github.com/gabime/{{ name }}/archive/v{{ version }}.tar.gz
-  sha256: 8741753e488a78dd0d0024c980e1fb5b5c85888447e309d9cb9d949bdb52aa3e
+  sha256: d8862955c6d74e5846b3f580b1605d2428b11d97a410d86e2fb13e857cd3a744
   patches:
     - async_test.patch  # [win]  Simple workaround for async issue. It looks like the code works, but the test result is inconsistent.
 
@@ -19,7 +19,7 @@ outputs:
   # Built in the historic Anaconda way.
   - name: spdlog
     script: build_std.sh  # [unix]
-    script: bld_std.bat    # [win]
+    script: bld_std.bat  # [win]
     build:
       run_exports:
         - {{ pin_subpackage('spdlog', max_pin='x') }}
@@ -31,32 +31,32 @@ outputs:
         - ninja
         # Tests are using catch2 which is unavailable on the main channel,
         # using vendored one instead
-        - git
+        - git  # [not win]
       host:
         - fmt 11.2.0
     test:
       commands:
-        - test -e $PREFIX/include/spdlog/spdlog.h                       # [unix]
+        - test -e $PREFIX/include/spdlog/spdlog.h  # [unix]
         - if not exist %PREFIX%\Library\include\spdlog\spdlog.h exit 1  # [win]
   # Built in the historic conda-forge way.
   - name: spdlog-fmt-embed
     script: build_fmt_embed.sh  # [unix]
-    script: bld_fmt_embed.bat   # [win]
+    script: bld_fmt_embed.bat  # [win]
     build:
       run_exports:
         - {{ pin_subpackage('spdlog-fmt-embed', max_pin='x') }}
       missing_dso_whitelist:  # [s390x]
-        - $RPATH/ld64.so.1    # [s390x] Know s390x `ld64.so` issue.
+        - $RPATH/ld64.so.1  # [s390x] Know s390x `ld64.so` issue.
     requirements:
       build:
         - cmake
         - {{ stdlib('c') }}
         - {{ compiler('cxx') }}
         - ninja
-        - git
+        - git  # [not win]
     test:
       commands:
-        - test -e $PREFIX/include/spdlog/spdlog.h                       # [unix]
+        - test -e $PREFIX/include/spdlog/spdlog.h  # [unix]
         - if not exist %PREFIX%\Library\include\spdlog\spdlog.h exit 1  # [win]
 
 about:
@@ -67,10 +67,14 @@ about:
   license_family: MIT
   license_file: LICENSE
   summary: Super fast C++ logging library.
-
   description: |
     spdlog is a header only library for Super fast C++ logging
     to be used with a C++11 compiler.
+
+
+
+
+
 
 extra:
   recipe-maintainers:
