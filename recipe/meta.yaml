@@ -30,7 +30,7 @@ outputs:
         # using vendored one instead
         - git
       host:
-        - fmt {{ fmt}}
+        - fmt {{ fmt }}
     test:
       commands:
         - test -e $PREFIX/include/spdlog/spdlog.h                       # [unix]
