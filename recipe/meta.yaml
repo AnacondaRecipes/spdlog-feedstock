@@ -25,7 +25,7 @@ outputs:
         - cmake
         - {{ stdlib('c') }}
         - {{ compiler('cxx') }}
-        - ninja
+        - ninja-base
         # Tests are using catch2 which is unavailable on the main channel,
         # using vendored one instead
         - git
@@ -47,7 +47,7 @@ outputs:
         - cmake
         - {{ stdlib('c') }}
         - {{ compiler('cxx') }}
-        - ninja
+        - ninja-base
         - git
     test:
       commands:
