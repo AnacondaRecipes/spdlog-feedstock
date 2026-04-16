@@ -1,4 +1,4 @@
-{% set version = "1.16.0" %}
+{% set version = "1.17.0" %}
 {% set name = "spdlog" %}
 
 package:
@@ -7,19 +7,16 @@ package:
 
 source:
   url: https://github.com/gabime/{{ name }}/archive/v{{ version }}.tar.gz
-  sha256: 8741753e488a78dd0d0024c980e1fb5b5c85888447e309d9cb9d949bdb52aa3e
-  patches:
-    - async_test.patch  # [win]  Simple workaround for async issue. It looks like the code works, but the test result is inconsistent.
+  sha256: d8862955c6d74e5846b3f580b1605d2428b11d97a410d86e2fb13e857cd3a744
 
 build:
-  skip: true  # [win and vc<14]
   number: 0
 
 outputs:
   # Built in the historic Anaconda way.
   - name: spdlog
     script: build_std.sh  # [unix]
-    script: bld_std.bat    # [win]
+    script: bld_std.bat   # [win]
     build:
       run_exports:
         - {{ pin_subpackage('spdlog', max_pin='x') }}
@@ -28,12 +25,14 @@ outputs:
         - cmake
         - {{ stdlib('c') }}
         - {{ compiler('cxx') }}
-        - ninja
+        - ninja-base
         # Tests are using catch2 which is unavailable on the main channel,
         # using vendored one instead
         - git
       host:
-        - fmt 11.2.0
+        # FMT_VERSION defined in include/spdlog/fmt/bundled/base.h
+        # https://github.com/gabime/spdlog/blob/v1.17.0/include/spdlog/fmt/bundled/base.h#L24
+        - fmt 12.1.0
     test:
       commands:
         - test -e $PREFIX/include/spdlog/spdlog.h                       # [unix]
@@ -45,14 +44,12 @@ outputs:
     build:
       run_exports:
         - {{ pin_subpackage('spdlog-fmt-embed', max_pin='x') }}
-      missing_dso_whitelist:  # [s390x]
-        - $RPATH/ld64.so.1    # [s390x] Know s390x `ld64.so` issue.
     requirements:
       build:
         - cmake
         - {{ stdlib('c') }}
         - {{ compiler('cxx') }}
-        - ninja
+        - ninja-base
         - git
     test:
       commands:
